@@ -3,33 +3,45 @@ const connectDB = require("./db");
 const User = require("./models/user");
 const Account = require("./models/account");
 const Userdata = require("./models/userdata");
-const bcrypt = require("bcrypt"); // Import bcrypt module
-const { getBuyerEmailsByProduct } = require("./stripe");
+const bcrypt = require("bcrypt");
 const Payment = require("./models/payment");
 const cron = require("node-cron");
 const cors = require("cors");
 require("dotenv").config();
 const app = express();
-const sendEmail = require("./emails/email");
-const paymentEmail = require("./emails/paymentEmail");
 const dailydrawdownBreach = require("./emails/dailydrawdownBreach");
 const maxdrawdownBreach = require("./emails/maxdrawdownBreach");
 const mt4AccountCredentials = require("./emails/mt4AccountCredentials");
-const { AlertEmail } = require("./emails/tradeEmail");
 const phaseTwoPass = require("./emails/phasetwoPass");
 const phaseonePass = require("./emails/phaseonePass");
 const accounthistory = require("./models/accounthistory");
+const axios = require('axios');
+
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
-const PORT = process.env.PORT;
 
+
+const PORT = process.env.PORT;
+const BASE_URL = process.env.NOWPAYMENTS_URL;
+const NOWPAYMENTS_API_KEY = process.env.NOWPAYMENTS_API_KEY;
+const SUCCESS_URL = process.env.SUCCESS_URL;
+const CANCEL_URL = process.env.CANCEL_URL;
+const IPN_CALLBACK_URL = process.env.IPN_CALLBACK_URL;
 // Connect to MongoDB
 connectDB();
 
+const PLANS = {
+  '5k': { name: 'START SMALL, GROW BIG - 5K Funded Account', price: 39, accountBalance: 5000 },
+  '10k': { name: 'EXPAND YOUR REACH - 10K Funded Account', price: 69, accountBalance: 10000 },
+  '25k': { name: 'LEVEL UP YOUR TRADING - 25K Funded Account', price: 145, accountBalance: 25000 },
+  '50k': { name: 'TRADE LIKE A PRO - 50K Funded Account', price: 254, accountBalance: 50000 }
+};
+
 // Define a simple route
 app.get("/", async (req, res) => {
-  res.send("GryFunding Backend Running V2");
+  res.send("MarginFunding Backend Running V2");
 });
+
 app.get("/admin/data", async (req, res) => {
   try {
     const data = await Account.find();
@@ -337,6 +349,75 @@ function findUser(username, password) {
     }
   });
 }
+
+app.post("/api/create-payment", async (req, res) => {
+  try {
+    const { plan, pay_currency = 'BTC', email } = req.body;
+    
+    // Validate plan
+    if (!PLANS[plan]) {
+      return res.status(400).json({ error: 'Invalid plan selected' });
+    }
+    
+    const planDetails = PLANS[plan];
+    const orderId = `${plan}-${Date.now()}`;
+    
+    // Create invoice via NOWPayments API
+    const response = await axios.post(`${BASE_URL}/invoice`, {
+      price_amount: planDetails.price,
+      price_currency: 'USD',
+      pay_currency: pay_currency,
+      order_id: orderId,
+      order_description: planDetails.name,
+      ipn_callback_url: IPN_CALLBACK_URL,
+      success_url: SUCCESS_URL,
+      cancel_url: CANCEL_URL,
+      collect_user_data: true,
+    }, {
+      headers: {
+        'x-api-key': NOWPAYMENTS_API_KEY,
+        'Content-Type': 'application/json'
+      }
+    });
+    // Save payment to database using the updated model structure
+    const newPayment = new Payment({
+      // Map response data directly to the model fields
+      id: response.data.id,
+      token_id: response.data.token_id,
+      order_id: response.data.order_id,
+      order_description: response.data.order_description,
+      price_amount: response.data.price_amount,
+      price_currency: response.data.price_currency,
+      pay_currency: response.data.pay_currency,
+      ipn_callback_url: response.data.ipn_callback_url,
+      invoice_url: response.data.invoice_url,
+      success_url: response.data.success_url,
+      cancel_url: response.data.cancel_url,
+      partially_paid_url: response.data.partially_paid_url,
+      status: 'pending',
+      payout_currency: response.data.payout_currency,
+      created_at: response.data.created_at,
+      updated_at: response.data.updated_at,
+      is_fixed_rate: response.data.is_fixed_rate,
+      is_fee_paid_by_user: response.data.is_fee_paid_by_user,
+      email: email
+    });
+    
+    await newPayment.save();
+    console.log("Invoice generated successfully : ", response.data.invoice_url);
+    res.json({
+      invoice_url: response.data.invoice_url
+    });
+    
+  } catch (error) {
+    console.error('Payment creation error:', error.response?.data || error.message);
+    res.status(500).json({ 
+      error: 'Failed to create payment',
+      details: error.response?.data || error.message
+    });
+  }
+});
+
 
 // cron job
 cron.schedule("0 2 * * *", async () => {
