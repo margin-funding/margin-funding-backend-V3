@@ -2,8 +2,8 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const path = require("path");
-
-const absolutePathToBanner = path.resolve(__dirname, '..', 'banner.jpeg');
+const { headerHtml, headerImagePath } = require("./header");
+const footer = require("./footer");
 
 // Example asynchronous function
 async function AlertEmail(req, res) {
@@ -106,6 +106,7 @@ async function AlertEmail(req, res) {
         </style>
       </head>
       <body>
+       ${headerHtml}
         <h2>Account Information</h2>
         <p>${additionalInfo}</p>
         <table>
@@ -138,17 +139,18 @@ async function AlertEmail(req, res) {
             <td>${openPositions}</td>
           </tr>
         </table>
+        ${footer}
       </body>
     </html>
     `;
 
-    const subject = `GRY FUNDING LLC ${serverNumber} Breach`;
+    const subject = `Margin FUNDING LLC ${serverNumber} Breach`;
 
     // Send mail
     const info = await new Promise((resolve, reject) => {
       transporter.sendMail(
         {
-          from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
+          from: `"Margin FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
           to: Email, // list of receivers
           subject: subject, // Subject line
           html: htmlTemplate, // html body

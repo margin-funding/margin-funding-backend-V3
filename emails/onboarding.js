@@ -1,10 +1,9 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const path = require("path");
 const { headerHtml, headerImagePath } = require("./header");
 const footer = require("./footer");
 
-async function paymentEmail(receiver, name, amount, accountBalance,server,password,serverName) {
+async function sendEmail(receiver, password, name) {
   try {
     if (!receiver) return;
 
@@ -38,60 +37,78 @@ async function paymentEmail(receiver, name, amount, accountBalance,server,passwo
     const htmlTemplate = `
     <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-        body {
-            ont-family: 'Arial', sans-serif;
+            body {
+                font-family: 'Arial', sans-serif;
                 margin: 0;
                 padding: 0;
                 color: #333333;
                 background-color: #ffffff;
-        }
-        .container {
-            width: 100%;
+            }
+            .container {
+                width: 100%;
                 max-width: 600px;
                 margin: 20px auto;
                 background-color: rgba(245, 245, 220, 0.1);
                 border-radius: 10px;
                 border: 3px solid #000000;
                 box-shadow: 0 0 100px 0 rgba(0, 0, 0, 1);
-        }
-        .main {
-            padding: 20px;
+            }
+            .main {
+                padding: 20px;
                 text-align: left;
-                color:rgb(0, 0, 0);
-                line-height: 1;
-        }
-        .main h1 {
-           font-size: 30px;
-                color:rgb(0, 0, 0);
+                color: rgb(0, 0, 0);
+                line-height: 1.5;
+            }
+            h1 {
+                font-size: 30px;
+                color: rgb(0, 0, 0);
                 font-weight: bold;
                 margin-bottom: -10px;
                 text-align: center;
-        }
+            }
+            h2 {
+                font-size: 20px;
+                color: rgb(0, 0, 0);
+                margin-top: -10px;
+                text-align: center;
+            }
+            .footer {
+                padding: 15px;
+                text-align: center;
+                font-size: 12px;
+                color: #666;
+                border-top: 1px solid #ddd;
+            }
+            .credentials {
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-radius: 5px;
+                margin: 15px 0;
+                border-left: 4px solid #000;
+            }
         </style>
     </head>
     <body>
         <div class="container">
-        ${headerHtml}
+            ${headerHtml}
             <div class="main">
-                <h1>Hi ${name},</h1>
-                <p>Welcome to the Trading Team! Below you can find the details for your new funded account, if you have any questions, contact: <a href="mailto:support@gryfunding.com">support@gryfunding.com</a></p>
+                <h1>Welcome to MARGIN FUNDING</h1>
+                <h2>Hello, ${name}! 🎉</h2>
                 
-                <h2>Account Details:</h2>
-                <p>2-Step Evaluation - $${accountBalance} - MT4</p>
+                <p>Your login credentials for MARGIN FUNDING are as follows:</p>
                 
-                <h2>MetaTrader Login Details</h2>
-                <p><b>Account Number:</b> ${server}</p>
-                <p><b>Password:</b> ${password}</p>
-                <p><b>Server:</b> ${serverName}</p>
-                <p>MT4 Download: <a href="https://www.metatrader4.com/en/download" target="_blank">https://www.metatrader4.com/en/download</a></p>
+                <div class="credentials">
+                    <p><strong>Username:</strong> ${receiver}</p>
+                    <p><strong>Password:</strong> ${password}</p>
+                </div>
                 
-                <h2>Next Steps</h2>
-                <p>You are able to begin trading now, as soon as you hit your profit target, we will send you login details for phase 2. Please refer to the rules found in your trader dashboard. We will message you if you breach any of these rules.</p>
-                <p>We wish you the best of luck trading!</p>
+                <p>You will receive your trading account credentials in 1-3 business days. 📈</p>
+                <p>Thank you for choosing MARGIN FUNDING for your trading journey!</p>
                 
-                <p>Best,</p>
-                <p>MarginFunding</p>
+                <p>Best Regards,</p>
+                <p>MARGIN FUNDING Team</p>
             </div>
             ${footer}
         </div>
@@ -99,9 +116,9 @@ async function paymentEmail(receiver, name, amount, accountBalance,server,passwo
     </html>
     `;
 
-    const subject = "Margin FUNDING PAYMENTS";
+    const subject = "Your MARGIN FUNDING Credentials";
     const mailOptions = {
-      from: `"Margin FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
       subject: subject,
       html: htmlTemplate,
@@ -129,8 +146,8 @@ async function paymentEmail(receiver, name, amount, accountBalance,server,passwo
 
     console.log("Message sent: %s", info.messageId);
   } catch (error) {
-    console.log("Error: ", error);
+    console.error("Error: ", error);
   }
 }
 
-module.exports = paymentEmail;
+module.exports = sendEmail;

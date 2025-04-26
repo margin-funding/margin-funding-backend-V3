@@ -16,6 +16,14 @@ const phaseTwoPass = require("./emails/phasetwoPass");
 const phaseonePass = require("./emails/phaseonePass");
 const accounthistory = require("./models/accounthistory");
 const axios = require('axios');
+const bodyParser = require('body-parser');
+const StripePaymentController = require("./controllers/stripePayment")
+const rawBodyParser = bodyParser.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf;
+  }
+});
+
 
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
@@ -31,10 +39,17 @@ const IPN_CALLBACK_URL = process.env.IPN_CALLBACK_URL;
 connectDB();
 
 const PLANS = {
-  '5k': { name: 'START SMALL, GROW BIG - 5K Funded Account', price: 39, accountBalance: 5000 },
-  '10k': { name: 'EXPAND YOUR REACH - 10K Funded Account', price: 69, accountBalance: 10000 },
-  '25k': { name: 'LEVEL UP YOUR TRADING - 25K Funded Account', price: 145, accountBalance: 25000 },
-  '50k': { name: 'TRADE LIKE A PRO - 50K Funded Account', price: 254, accountBalance: 50000 }
+  '2k-instant': { name: 'START SMALL, GROW BIG - 2K Intsant Funded Account', price: 35, accountBalance: 2000 },
+  '5k-instant': { name: 'START SMALL, GROW BIG - 5K Intsant Funded Account', price: 45, accountBalance: 5000 },
+  '10k-instant': { name: 'START SMALL, GROW BIG - 10K Intsant Funded Account', price: 75, accountBalance: 10000 },
+  '20k-instant': { name: 'START SMALL, GROW BIG - 20K Intsant Funded Account', price: 125, accountBalance: 20000 },
+  '50k-instant': { name: 'START SMALL, GROW BIG - 50K Intsant Funded Account', price: 299, accountBalance: 50000 },
+  '100k-instant': { name: 'START SMALL, GROW BIG - 2K Intsant Funded Account', price: 549, accountBalance: 100000 },
+  '5k-phase2': { name: 'START SMALL, GROW BIG - 5K Funded Account', price: 39, accountBalance: 5000 },
+  '10k-phase2': { name: 'EXPAND YOUR REACH - 10K Funded Account', price: 69, accountBalance: 10000 },
+  '25k-phase2': { name: 'LEVEL UP YOUR TRADING - 25K Funded Account', price: 145, accountBalance: 25000 },
+  '50k-phase2': { name: 'TRADE LIKE A PRO - 50K Funded Account', price: 254, accountBalance: 50000 },
+  '100k-phase2': { name: 'TRADE LIKE A PRO - 100K Funded Account', price: 499, accountBalance: 100000 }
 };
 
 // Define a simple route
@@ -353,7 +368,7 @@ function findUser(username, password) {
 app.post("/api/create-payment", async (req, res) => {
   try {
     const { plan, pay_currency = 'BTC', email } = req.body;
-    
+    console.log("Plan : ", plan)
     // Validate plan
     if (!PLANS[plan]) {
       return res.status(400).json({ error: 'Invalid plan selected' });
@@ -418,6 +433,30 @@ app.post("/api/create-payment", async (req, res) => {
   }
 });
 
+
+// Add this to your existing Express app
+
+// POST Webhook Endpoint
+// It's CRITICAL that this route is defined BEFORE any express.json() middleware
+// In index.js
+app.post('/stripe/webhook', express.json(), async (req, res) => {
+  
+  try {
+    // Pass the parsed event to the controller
+    const event = req.body;
+    console.log('Webhook request received! : ', event);
+    const result = await StripePaymentController.handleWebhookEvent(event);
+    
+    // Acknowledge receipt of the event
+    res.status(200).json({ received: true, success: result.success });
+  } catch (error) {
+    console.error('Error processing webhook:', error);
+    res.status(400).send(`Webhook Error: ${error.message}`);
+  }
+});
+
+// AFTER the webhook route, you can use JSON middleware for other routes
+app.use(express.json());
 
 // cron job
 cron.schedule("0 2 * * *", async () => {

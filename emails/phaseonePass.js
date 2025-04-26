@@ -97,7 +97,7 @@ async function phaseonePass(receiver, name) {
 
     const subject = "Congratulations on Passing Phase One!";
     const mailOptions = {
-      from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
       subject: subject,
       html: htmlTemplate,

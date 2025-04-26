@@ -1,13 +1,15 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-const path = require("path");
 const fs = require("fs");
-const absolutePathToBanner = path.resolve(__dirname, "..", "banner.jpeg");
+
+
+const path = require("path");
+const { headerHtml, headerImagePath } = require("./header");
+const footer = require("./footer");
 const absolutePathToPDF = path.resolve(
   __dirname,
   "Illegal_Trading_Practices.pdf"
 );
-
 async function mt4AccountCredentials(
   receiver,
   name,
@@ -98,12 +100,10 @@ async function mt4AccountCredentials(
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <!-- Header is empty, background will be set by the email -->
-            </div>
+          ${headerHtml}
             <div class="main">
                 <h1>Hi ${name},</h1>
-                <p>Welcome to the Trading Team! Below you can find the details for your new funded account, if you have any questions, contact: <a href="mailto:support@gryfunding.com">support@gryfunding.com</a></p>
+                <p>Welcome to the Trading Team! Below you can find the details for your new funded account, if you have any questions, contact: <a href="mailto:support@marginfunding.com">support@marginfunding.com</a></p>
                 
                 <h2>Account Details:</h2>
                 <p>2-Step Evaluation - $${initialDeposit} - MT4</p>
@@ -119,11 +119,9 @@ async function mt4AccountCredentials(
                 <p>We wish you the best of luck trading!</p>
                 
                 <p>Best,</p>
-                <p>GRYFunding</p>
+                <p>MarginFunding</p>
             </div>
-            <div class="footer">
-                <!-- Footer content with social icons... -->
-            </div>
+            ${footer}
         </div>
     </body>
     </html>
@@ -131,15 +129,15 @@ async function mt4AccountCredentials(
     const pdfAttachment = fs.readFileSync(absolutePathToPDF);
     const subject = `Phase ${Phase} Account Credentials`;
     const mailOptions = {
-      from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
       subject: subject,
       html: htmlTemplate,
       attachments: [
         {
-          filename: "GRY FUNDING.jpeg",
-          path: absolutePathToBanner,
-          cid: "banner-image-cid",
+          filename: "Header.png",
+          path: headerImagePath,
+          cid: "header-image-cid",
         },
         {
           filename: "Illegal_Trading_Practices.pdf", // Update with your PDF file name
