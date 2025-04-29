@@ -1,5 +1,5 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const StripePayment = require('../models/stripePayment');
+const StripePayment = require('../models/StripePayment');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const sendEmail = require('../emails/onboarding'); // Adjust path as needed
