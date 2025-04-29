@@ -1,8 +1,9 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
 const path = require("path");
+const { headerHtml, headerImagePath } = require("./header");
+const footer = require("./footer");
 
-const absolutePathToBanner = path.resolve(__dirname, '..', 'banner.jpeg');
 async function phaseonePass(receiver, name) {
   try {
     if (!receiver) return;
@@ -49,50 +50,46 @@ async function phaseonePass(receiver, name) {
                 width: 100%;
                 max-width: 600px;
                 margin: 20px auto;
-                background-color: #ffffff;
-            }
-            .header {
-                background: url('cid:banner-image-cid') no-repeat center top;
-                background-size: cover;
-                height: 180px;
-                color: #ffffff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                background-color: rgba(245, 245, 220, 0.1);
+                border-radius: 10px;
+                border: 3px solid #000000;
+                box-shadow: 0 0 100px 0 rgba(0, 0, 0, 1);
+                
             }
             .main {
                 padding: 20px;
                 text-align: left;
+                color:rgb(0, 0, 0);
+                line-height: 1;
             }
-            .footer {
-                background-color: #eeeeee;
-                padding: 10px 20px;
+            h1 {
+                font-size: 30px;
+                color:rgb(0, 0, 0);
+                font-weight: bold;
+                margin-bottom: -10px;
                 text-align: center;
-                font-size: 12px;
             }
-            .footer a {
-                color: #333333;
-                text-decoration: none;
+            h2{
+                font-size: 20px;
+                color:rgb(0, 0, 0);
+                margin-top: -10px;
+                text-align: center;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <!-- Header with the background image -->
-            </div>
+          ${headerHtml}
             <div class="main">
-                <h1>Congratulations ${name}!</h1>
-                <p>You have successfully passed phase one of your Evaluation.</p>
-                <p>Keep an eye out, you will receive your new account details for phase two shortly.</p>
-                <p>Only 5% to go, you got this!</p>
-                <p>Best,</p>
-                <p>GRYFunding</p>
+                <h1> Congratulations </h1>
+                <h2>${name}! 🎉</h2>
+                <p>You have successfully passed phase one of your Evaluation.  🚀</p>
+                <p>Keep an eye out, you will receive your new account details for phase two shortly. 📩</p>
+                <p>Only <b style="color: rgb(21, 107, 0);">5%</b> to go, you got this! </p>
+                <p>Best Regards, </p>
+                <p>MarginFunding</p>
             </div>
-            <div class="footer">
-                <a href="https://gryfunding.com/">gryfunding.com</a>
-                <!-- Social media icons can be added here if necessary -->
-            </div>
+            ${footer}
         </div>
     </body>
     </html>
@@ -100,15 +97,15 @@ async function phaseonePass(receiver, name) {
 
     const subject = "Congratulations on Passing Phase One!";
     const mailOptions = {
-      from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
       subject: subject,
       html: htmlTemplate,
       attachments: [
         {
-          filename: "GRY FUNDING.jpeg",
-          path: absolutePathToBanner,
-          cid: "banner-image-cid",
+          filename: "Header.png",
+          path: headerImagePath,
+          cid: "header-image-cid",
         },
       ],
     };

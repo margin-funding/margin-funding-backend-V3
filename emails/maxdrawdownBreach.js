@@ -2,7 +2,8 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 
 const path = require("path");
-const absolutePathToBanner = path.resolve(__dirname, '..', 'banner.jpeg');
+const { headerHtml, headerImagePath } = require("./header");
+const footer = require("./footer");
 
 async function maxdrawdownBreach(receiver, name, account, serverNumber) {
   try {
@@ -47,63 +48,46 @@ async function maxdrawdownBreach(receiver, name, account, serverNumber) {
                 background-color: #ffffff;
             }
             .container {
-                width: 100%;
+               width: 100%;
                 max-width: 600px;
                 margin: 20px auto;
-                background-color: #ffffff;
-            }
-            .header {
-                background: url('cid:banner-image-cid') no-repeat center top;
-                background-size: cover;
-                height: 180px;
-                color: #ffffff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                background-color: rgba(245, 245, 220, 0.1);
+                border-radius: 10px;
+                border: 3px solid #000000;
+                box-shadow: 0 0 100px 0 rgba(0, 0, 0, 1);
+                
             }
             .main {
                 padding: 20px;
-                text-align: left; /* Align text to the left */
+                text-align: left;
+                color:rgb(0, 0, 0);
+                line-height: 1;
             }
-            .main h1 {
-                font-size: 20px;
-                margin-top: 0;
-            }
-            .footer {
-                background-color: #eeeeee;
-                padding: 10px 20px;
+            h1 {
+                font-size: 30px;
+                color:rgb(0, 0, 0);
+                font-weight: bold;
+                margin-bottom: -10px;
                 text-align: center;
-                font-size: 12px;
-            }
-            .footer a {
-                color: #333333;
-                text-decoration: none;
-            }
-            .footer img {
-                vertical-align: middle;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <!-- Header is empty, background will be set by the email -->
-            </div>
+        ${headerHtml}
             <div class="main">
                 <h1>Dear ${name},</h1>
                 <p>Unfortunately, your account has been terminated due to a rule breach. Please log into your dashboard for more details.</p>
                 <p><b>Server Number:</b> ${serverNumber}</p>
                 <p><b>Plan details: </b>$ ${account}</p>
                 <p><b>Rule Breached:</b> Max Drawdown</p>
-                <p>No need to worry, you are able to reset your funded account for the next 30 days. Just use code: "GRYReset" at checkout for 20% off your reset. We'll send your new account details right away so you can get back to it.</p>
+                <p>No need to worry, you are able to reset your funded account for the next 30 days. Just use code: "MARGINReset" at checkout for 20% off your reset. We'll send your new account details right away so you can get back to it.</p>
                 <p>We wish you the best of luck</p>
                 <p>Best,</p>
-                <p>GRYFunding</p>
+                <p>MarginFunding</p>
                 
             </div>
-            <div class="footer">
-            
-            </div>
+            ${footer}
         </div>
     </body>
     </html>
@@ -111,15 +95,15 @@ async function maxdrawdownBreach(receiver, name, account, serverNumber) {
 
     const subject = "Important: Max Drawdown Breach";
     const mailOptions = {
-      from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
       subject: subject,
       html: htmlTemplate,
       attachments: [
         {
-          filename: "GRY FUNDING.jpeg",
-          path: absolutePathToBanner,
-          cid: "banner-image-cid",
+          filename: "Header.png",
+          path: headerImagePath,
+          cid: "header-image-cid",
         },
       ],
     };

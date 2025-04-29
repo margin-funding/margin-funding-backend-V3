@@ -3,7 +3,8 @@ require("dotenv").config();
 
 const path = require("path");
 
-const absolutePathToBanner = path.resolve(__dirname, '..', 'banner.jpeg');
+const { headerHtml, headerImagePath } = require("./header");
+const footer = require("./footer");
 
 async function phaseTwoPass(receiver, name) {
   try {
@@ -51,40 +52,38 @@ async function phaseTwoPass(receiver, name) {
                 width: 100%;
                 max-width: 600px;
                 margin: 20px auto;
-                background-color: #ffffff;
-            }
-            .header {
-                background: url('cid:banner-image-cid') no-repeat center top;
-                background-size: cover;
-                height: 180px;
-                color: #ffffff;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                background-color: rgba(245, 245, 220, 0.1);
+                border-radius: 10px;
+                border: 3px solid #000000;
+                box-shadow: 0 0 100px 0 rgba(0, 0, 0, 1);
             }
             .main {
                 padding: 20px;
                 text-align: left; /* Align text to the left */
+               color:rgb(0, 0, 0);
+               line-height: 1;
             }
-            .footer {
-                background-color: #eeeeee;
-                padding: 10px 20px;
+                   h1 {
+                font-size: 30px;
+                color:rgb(0, 0, 0);
+                font-weight: bold;
+                margin-bottom: -10px;
                 text-align: center;
-                font-size: 12px;
             }
-            .footer a {
-                color: #333333;
-                text-decoration: none;
+            h2{
+                font-size: 20px;
+                color:rgb(0, 0, 0);
+                margin-top: -10px;
+                text-align: center;
             }
         </style>
     </head>
     <body>
         <div class="container">
-            <div class="header">
-                <!-- Header with the background image -->
-            </div>
+        ${headerHtml}
             <div class="main">
-                <h1>Congratulations ${name},</h1>
+                <h1> Congratulations </h1>
+                <h2>${name}! 🎉</h2>
                 <p>We want to personally congratulate you on your outstanding trading performance! You have successfully passed phase 2 of our evaluation, with that being said...</p>
                 <p>Welcome to the team!</p>
                 <p>We will send you details of your funded account once you have completed the next steps below. This normally takes between 1-3 working days.</p>
@@ -95,32 +94,29 @@ async function phaseTwoPass(receiver, name) {
                     <li>Please respond to this email once you have completed it, or if you have already completed it previously, or if you have any issues with completing this process.</li>
                 </ul>
                 <p>TrustPilot</p>
-                <p>Could you please consider leaving us a review on TrustPilot? This is simply a friendly request and won't impact your live account activation. It won't take much time, and your support means a lot to us. You can find the link here: <a href="https://trustpilot.com/review/GRYFunding" target="_blank">Trustpilot Review</a>.</p>
+                <p>Could you please consider leaving us a review on TrustPilot? This is simply a friendly request and won't impact your live account activation. It won't take much time, and your support means a lot to us. You can find the link here: <a href="https://trustpilot.com/review/MarginFunding" target="_blank">Trustpilot Review</a>.</p>
                 <p>Once again, outstanding work on passing your evaluation, we look forward to having you on the team!</p>
                 <p>Please be aware that while your live account remains active, we have a funding limit of up to $100,000 per trader at any given time. In the event of a breach of your live account, you must seek approval for further funding before initiating a new evaluation. Proceeding with a new evaluation without authorization may jeopardize your eligibility for a live account upon successful completion, and refunds will not be provided. Additionally, please ensure you understand and adhere to our policy against copy trading across multiple accounts. For detailed information on our account rules, please refer to our website and FAQs. If you breach terms on a new live account, please contact us before initiating a new evaluation.</p>
                 <p>Best,</p>
-                <p>GRYFunding</p>
+                <p>MarginFunding</p>
             </div>
-            <div class="footer">
-                <a href="https://gryfunding.com/">gryfunding.com</a>
-                <!-- Add social media icons here if necessary -->
-            </div>
+            ${footer}
         </div>
     </body>
     </html>
     `;
 
-    const subject = "Welcome to GRY Funding - Phase Two Passed";
+    const subject = "Welcome to Margin Funding - Phase Two Passed";
     const mailOptions = {
-      from: `"GRY FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
+      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
       to: receiver, // list of receivers
       subject: subject, // Subject line
       html: htmlTemplate, // html body
       attachments: [
         {
-          filename: "GRY FUNDING.jpeg",
-          path: absolutePathToBanner, // Update this path
-          cid: "banner-image-cid", // Make sure this CID matches the one used in the HTML template
+          filename: "Header.png",
+          path: headerImagePath, // Update this path
+          cid: "header-image-cid", // Make sure this CID matches the one used in the HTML template
         },
       ],
     };
