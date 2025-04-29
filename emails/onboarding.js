@@ -13,8 +13,8 @@ async function sendEmail(receiver, password, name) {
       secure: true,
       secureConnection: false,
       auth: {
-        user: process.env.EMAIL_ADMIN,
-        pass: process.env.PASSWORD_ADMIN,
+        user: "marginfundingnet@gmail.com",
+        pass: "olvpdexagtpfzwps",
       },
       tls: {
         rejectUnauthorized: true,
