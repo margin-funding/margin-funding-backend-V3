@@ -250,10 +250,10 @@ app.get("/userdata", async (req, res) => {
     }
 
     // Find the account data based on the user's username
-    const accounts = await Account.find({ User: username }).populate(
-      "accountHistory"
-    );
-
+    const accounts = await Account.find({ 
+      User: new RegExp(`^${username}$`, 'i') 
+    }).populate("accountHistory");
+    
     // Return the user and account data as JSON
     res
       .status(200)
@@ -444,7 +444,7 @@ app.post('/stripe/webhook', express.json(), async (req, res) => {
   try {
     // Pass the parsed event to the controller
     const event = req.body;
-    console.log('Webhook request received! : ', event);
+    console.log('Webhook request received! : ');
     const result = await StripePaymentController.handleWebhookEvent(event);
     
     // Acknowledge receipt of the event
