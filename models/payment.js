@@ -22,7 +22,7 @@ const PaymentSchema = new mongoose.Schema(
     updated_at: { type: String },
     is_fixed_rate: { type: Boolean },
     is_fee_paid_by_user: { type: Boolean },
-    email: { type: String, required: true },
+    email: { type: String },
   },
   { timestamps: true }
 );
