@@ -387,6 +387,7 @@ app.post("/api/create-payment", async (req, res) => {
       success_url: SUCCESS_URL,
       cancel_url: CANCEL_URL,
       collect_user_data: true,
+      ipn_callback_url: SUCCESS_URL,
     }, {
       headers: {
         'x-api-key': NOWPAYMENTS_API_KEY,
