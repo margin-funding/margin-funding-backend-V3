@@ -30,11 +30,10 @@ app.use(express.json());
 
 
 const PORT = process.env.PORT;
-const BASE_URL = process.env.NOWPAYMENTS_URL;
-const NOWPAYMENTS_API_KEY = process.env.NOWPAYMENTS_API_KEY;
-const SUCCESS_URL = process.env.SUCCESS_URL;
-const CANCEL_URL = process.env.CANCEL_URL;
-const IPN_CALLBACK_URL = process.env.IPN_CALLBACK_URL;
+const BASE_URL = "https://api.nowpayments.io/v1";
+const NOWPAYMENTS_API_KEY = "MMN3EEE-96A4PPW-GSWSTTQ-X2RPB4C";
+const SUCCESS_URL = "https://marginfunding.net";
+const CANCEL_URL = "https://marginfunding.net";
 // Connect to MongoDB
 connectDB();
 
@@ -415,7 +414,7 @@ app.post("/api/create-payment", async (req, res) => {
       updated_at: response.data.updated_at,
       is_fixed_rate: response.data.is_fixed_rate,
       is_fee_paid_by_user: response.data.is_fee_paid_by_user,
-      email: email
+      email: ''
     });
     
     await newPayment.save();
