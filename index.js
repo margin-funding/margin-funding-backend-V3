@@ -383,11 +383,10 @@ app.post("/api/create-payment", async (req, res) => {
       pay_currency: pay_currency,
       order_id: orderId,
       order_description: planDetails.name,
-      ipn_callback_url: IPN_CALLBACK_URL,
+      ipn_callback_url: SUCCESS_URL,
       success_url: SUCCESS_URL,
       cancel_url: CANCEL_URL,
       collect_user_data: true,
-      ipn_callback_url: SUCCESS_URL,
     }, {
       headers: {
         'x-api-key': NOWPAYMENTS_API_KEY,
