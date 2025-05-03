@@ -309,21 +309,37 @@ app.post("/profiledata", async (req, res) => {
 });
 
 app.post("/create/user", async (req, res) => {
-  console.log("body : ", req.body);
-  let username = req.body.username;
-  let password = req.body.password;
-  console.log("username: ", username, " password : ", password);
-  if (!username || !password)
-    res.send({ success: false, message: "User not found" });
-  else {
+  try {
+    console.log("body : ", req.body);
+    let username = req.body.username;
+    let password = req.body.password;
+    console.log("username: ", username, " password : ", password);
+    
+    if (!username || !password) {
+      return res.send({ success: false, message: "Username and password are required" });
+    }
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ Username: username });
+    
+    if (existingUser) {
+      return res.send({ success: false, message: "User already exists" });
+    }
+    
+    // If the user doesn't exist, create a new user
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-    // If the user doesn't exist, create a new user
+    
     const newUser = new User({ Username: username, Password: hashedPassword });
     await newUser.save();
+    
+    // Send email to the new user
     await sendEmail(username, password, username);
+    
     res.send({ success: true, message: "New User Created Email Sent" });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    res.status(500).send({ success: false, message: "Error creating user" });
   }
 });
 // Function to create a user
