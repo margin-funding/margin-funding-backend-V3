@@ -14,6 +14,7 @@ const maxdrawdownBreach = require("./emails/maxdrawdownBreach");
 const mt4AccountCredentials = require("./emails/mt4AccountCredentials");
 const phaseTwoPass = require("./emails/phasetwoPass");
 const phaseonePass = require("./emails/phaseonePass");
+const instantPass = require("./emails/instantPass")
 const accounthistory = require("./models/accounthistory");
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -98,7 +99,7 @@ app.get("/sendEmail", async (req, res) => {
     }
 
     if (Type === "1") {
-      await phaseonePass(Email, accountName, initialDeposit, serverNumber);
+      await phaseonePass(Email, accountName);
       // Send success response
       return res.status(200).json({ message: "Email sent successfully 1" });
     }
@@ -121,6 +122,11 @@ app.get("/sendEmail", async (req, res) => {
         serverNumber
       );
       return res.status(200).json({ message: "Email sent successfully 4" });
+    }
+    if (Type === "5") {
+      await instantPass(Email, accountName);
+      // Send success response
+      return res.status(200).json({ message: "Email sent successfully 1" });
     }
 
     // Send success response
