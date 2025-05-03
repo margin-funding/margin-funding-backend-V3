@@ -10,6 +10,7 @@ const absolutePathToPDF = path.resolve(
   __dirname,
   "Illegal_Trading_Practices.pdf"
 );
+
 async function mt4AccountCredentials(
   receiver,
   name,
@@ -48,6 +49,19 @@ async function mt4AccountCredentials(
         }
       });
     });
+
+    // Check if Phase is 'instant' to customize the email content
+    const isInstant = Phase.toLowerCase() === 'instant';
+    
+    // Set the account type description based on whether it's an instant account
+    const accountTypeText = isInstant 
+      ? `Instant Funded Account - $${initialDeposit} - MT4` 
+      : `2-Step Evaluation - $${initialDeposit} - MT4`;
+    
+    // Set the next steps text based on whether it's an instant account
+    const nextStepsText = isInstant
+      ? `You are able to begin trading now with your fully funded account. Please refer to the rules found in your trader dashboard. We will message you if you breach any of these rules.`
+      : `You are able to begin trading now, as soon as you hit your profit target, we will send you login details for phase 2. Please refer to the rules found in your trader dashboard. We will message you if you breach any of these rules.`;
 
     const htmlTemplate = `
     <html>
@@ -106,7 +120,7 @@ async function mt4AccountCredentials(
                 <p>Welcome to the Trading Team! Below you can find the details for your new funded account, if you have any questions, contact: <a href="mailto:support@marginfunding.com">support@marginfunding.com</a></p>
                 
                 <h2>Account Details:</h2>
-                <p>2-Step Evaluation - $${initialDeposit} - MT4</p>
+                <p>${accountTypeText}</p>
                 
                 <h2>MetaTrader Login Details</h2>
                 <p><b>Account Number:</b> ${server}</p>
@@ -115,7 +129,7 @@ async function mt4AccountCredentials(
                 <p>MT4 Download: <a href="https://www.metatrader4.com/en/download" target="_blank">https://www.metatrader4.com/en/download</a></p>
                 
                 <h2>Next Steps</h2>
-                <p>You are able to begin trading now, as soon as you hit your profit target, we will send you login details for phase 2. Please refer to the rules found in your trader dashboard. We will message you if you breach any of these rules.</p>
+                <p>${nextStepsText}</p>
                 <p>We wish you the best of luck trading!</p>
                 
                 <p>Best,</p>
@@ -127,7 +141,12 @@ async function mt4AccountCredentials(
     </html>
     `;
     const pdfAttachment = fs.readFileSync(absolutePathToPDF);
-    const subject = `Phase ${Phase} Account Credentials`;
+    
+    // Set the subject based on whether it's an instant account
+    const subject = isInstant 
+      ? `Instant Funded Account Credentials` 
+      : `Phase ${Phase} Account Credentials`;
+      
     const mailOptions = {
       from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
       to: receiver,
