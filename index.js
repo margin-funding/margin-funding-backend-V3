@@ -307,6 +307,24 @@ app.post("/profiledata", async (req, res) => {
   }
 });
 
+app.post("/create/user", async (req, res) => {
+  console.log("body : ", req.body);
+  let username = req.body.username;
+  let password = req.body.password;
+  console.log("username: ", username, " password : ", password);
+  if (!username || !password)
+    res.send({ success: false, message: "User not found" });
+  else {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // If the user doesn't exist, create a new user
+    const newUser = new User({ Username: username, Password: hashedPassword });
+    await newUser.save();
+    await sendEmail(username, password, username);
+    res.send({ success: true, message: "New User Created Email Sent" });
+  }
+});
 // Function to create a user
 async function createUser(username, password) {
   try {
