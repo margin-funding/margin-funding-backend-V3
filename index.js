@@ -18,6 +18,7 @@ const accounthistory = require("./models/accounthistory");
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const StripePaymentController = require("./controllers/stripePayment")
+const sendEmail = require('./emails/onboarding'); 
 const rawBodyParser = bodyParser.json({
   verify: (req, res, buf) => {
     req.rawBody = buf;
