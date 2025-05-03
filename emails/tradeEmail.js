@@ -74,6 +74,8 @@ async function AlertEmail(req, res) {
       additionalInfo = `Respected Sir, this Account Company ${accountName} with Account Number ${serverNumber} has reached -8% Max Drawdown`;
     } else if (Type === "4") {
       additionalInfo = `Respected Sir, this Account Company ${accountName} with Account Number ${serverNumber} has reached -4% Daily Drawdown`;
+    }else if (Type === "5") {
+      additionalInfo = `Respected Sir, this Account Company ${accountName} with Account Number ${serverNumber} has reached instant account Profit Target`;
     }
 
     // Create HTML template
@@ -150,7 +152,7 @@ async function AlertEmail(req, res) {
     const info = await new Promise((resolve, reject) => {
       transporter.sendMail(
         {
-          from: `"Margin FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
+          from: "MARGIN FUNDING LLC", // sender address
           to: Email, // list of receivers
           subject: subject, // Subject line
           html: htmlTemplate, // html body

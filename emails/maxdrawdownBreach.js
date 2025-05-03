@@ -95,7 +95,7 @@ async function maxdrawdownBreach(receiver, name, account, serverNumber) {
 
     const subject = "Important: Max Drawdown Breach";
     const mailOptions = {
-      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "MARGIN FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,

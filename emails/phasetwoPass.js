@@ -108,7 +108,7 @@ async function phaseTwoPass(receiver, name) {
 
     const subject = "Welcome to Margin Funding - Phase Two Passed";
     const mailOptions = {
-      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`, // sender address
+      from: "MARGIN FUNDING LLC", // sender address
       to: receiver, // list of receivers
       subject: subject, // Subject line
       html: htmlTemplate, // html body

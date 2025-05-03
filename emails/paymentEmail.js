@@ -101,7 +101,7 @@ async function paymentEmail(receiver, name, amount, accountBalance,server,passwo
 
     const subject = "Margin FUNDING PAYMENTS";
     const mailOptions = {
-      from: `"Margin FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "MARGIN FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,

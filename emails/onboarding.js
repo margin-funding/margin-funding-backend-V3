@@ -118,7 +118,7 @@ async function sendEmail(receiver, password, name) {
 
     const subject = "Your MARGIN FUNDING Credentials";
     const mailOptions = {
-      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "MARGIN FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,

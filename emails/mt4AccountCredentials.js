@@ -148,7 +148,7 @@ async function mt4AccountCredentials(
       : `Phase ${Phase} Account Credentials`;
       
     const mailOptions = {
-      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "MARGIN FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,

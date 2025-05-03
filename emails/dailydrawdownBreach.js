@@ -95,7 +95,7 @@ async function dailydrawdownBreach(receiver, name, account, serverNumber) {
 
     const subject = "Important: Daily Drawdown Breach";
     const mailOptions = {
-      from: `"Margin FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "Margin FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,

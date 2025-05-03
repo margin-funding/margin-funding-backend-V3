@@ -192,7 +192,7 @@ async function sendPaymentConfirmation(receiver, name, amount, currency, payment
 
     const subject = "Payment Confirmation - MARGIN FUNDING";
     const mailOptions = {
-      from: `"MARGIN FUNDING LLC" <${process.env.EMAIL_ADMIN}>`,
+      from: "MARGIN FUNDING LLC",
       to: receiver,
       subject: subject,
       html: htmlTemplate,
