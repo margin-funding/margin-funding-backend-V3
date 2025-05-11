@@ -81,10 +81,10 @@ async function dailydrawdownBreach(receiver, name, account, serverNumber) {
                 <p><b>Server Number:</b> ${serverNumber}</p>
                 <p><b>Plan details: </b>$ ${account}</p>
                 <p><b>Rule Breached:</b> Daily Drawdown</p>
-                <p>No need to worry, you are able to reset your funded account for the next 30 days. Just use code: "GRYReset" at checkout for 20% off your reset. We'll send your new account details right away so you can get back to it.</p>
+                <p>No need to worry, you are able to reset your funded account for the next 30 days. Just use code: "MarginReset" at checkout for 20% off your reset. We'll send your new account details right away so you can get back to it.</p>
                 <p>We wish you the best of luck</p>
                 <p>Best,</p>
-                <p>GRYFunding</p>
+                <p>MarginFunding</p>
                 
             </div>
             ${footer}
